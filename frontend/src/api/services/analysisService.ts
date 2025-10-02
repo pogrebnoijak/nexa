@@ -28,8 +28,6 @@ export class AnalysisApiService {
   ): Promise<ApiResponse<any>> {
     // ПРОВЕРКА: Если передан ID (не пустой), НЕ делаем запрос
     if (ktgId && ktgId.trim() !== '') {
-        `[ANALYSIS SERVICE] БЛОКИРОВКА: Попытка POST к /analyze/ids/${ktgId} - запрос отменен`
-      );
       return {
         success: false,
         error: 'POST запросы к /analyze/ids/{id} запрещены',
