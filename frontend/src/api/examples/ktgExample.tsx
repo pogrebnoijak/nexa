@@ -21,14 +21,12 @@ export const KTGExample: React.FC = () => {
   const handleStartRecording = async () => {
     const success = await startRecording('123455');
     if (success) {
-      console.log('Recording started');
     }
   };
 
   const handleStopRecording = async () => {
     const success = await stopRecording('123455');
     if (success) {
-      console.log('Recording stopped');
     }
   };
 
@@ -42,7 +40,6 @@ export const KTGExample: React.FC = () => {
     });
 
     if (newKTG) {
-      console.log('KTG created:', newKTG);
     }
   };
 

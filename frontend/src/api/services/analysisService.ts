@@ -6,14 +6,12 @@ export class AnalysisApiService {
   // Получить список доступных КТГ ID
   async getAvailableIds(): Promise<ApiResponse<string[]>> {
     const url = '/analyze/ids';
-    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
     return httpClient.get<string[]>(url);
   }
 
   // Получить анализ по конкретному ID
   async getAnalysisById(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
     const url = `/analyze/ids/${ktgId}?models=`;
-    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
     return httpClient.get<any>(url, { signal });
   }
 
@@ -30,7 +28,6 @@ export class AnalysisApiService {
   ): Promise<ApiResponse<any>> {
     // ПРОВЕРКА: Если передан ID (не пустой), НЕ делаем запрос
     if (ktgId && ktgId.trim() !== '') {
-      console.log(
         `[ANALYSIS SERVICE] БЛОКИРОВКА: Попытка POST к /analyze/ids/${ktgId} - запрос отменен`
       );
       return {
@@ -42,28 +39,24 @@ export class AnalysisApiService {
 
     // Всегда используем /analyze/ids (только для создания новых КТГ)
     const url = '/analyze/ids';
-    console.log(`[ANALYSIS SERVICE] POST запрос к URL: ${url}`, data);
     return httpClient.post<any>(url, data);
   }
 
   // Получить полный анализ
   async getAnalysis(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
     const url = `${API_ENDPOINTS.ANALYSIS.ANALYZE}?records=1&predicts=1`;
-    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
     return httpClient.get<any>(url, { signal });
   }
 
   // Получить быстрый анализ без моделей (основные данные + records, но без тяжелых моделей)
   async getAnalysisFast(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
     const url = `${API_ENDPOINTS.ANALYSIS.ANALYZE}?records=1&models=null`;
-    console.log(`[ANALYSIS SERVICE] Быстрый запрос к URL: ${url}`);
     return httpClient.get<any>(url, { signal });
   }
 
   // Получить только predicts (прогнозы и графики) через отдельный endpoint
   async getAnalysisPredicts(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
     const url = `/analyze/predicts/${ktgId}`;
-    console.log(`[ANALYSIS SERVICE] Запрос predicts к URL: ${url}`);
     return httpClient.get<any>(url, { signal });
   }
 

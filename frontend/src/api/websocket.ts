@@ -71,7 +71,6 @@ export class WebSocketClient {
 
             this.handleMessage(message);
           } catch (error) {
-            console.error('Error parsing WebSocket message:', error);
           }
         };
 
@@ -86,7 +85,6 @@ export class WebSocketClient {
         };
 
         this.ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
           this.isConnecting = false;
           this.errorHandlers.forEach((handler) => handler(error));
           reject(error);
@@ -111,7 +109,6 @@ export class WebSocketClient {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
-      console.warn('WebSocket is not connected');
     }
   }
 
@@ -166,7 +163,6 @@ export class WebSocketClient {
     setTimeout(() => {
       this.reconnectAttempts++;
       this.connect().catch((error) => {
-        console.error('Reconnection failed:', error);
       });
     }, this.reconnectInterval);
   }

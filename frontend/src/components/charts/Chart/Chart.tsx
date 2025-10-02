@@ -500,7 +500,6 @@ export const Chart: React.FC<ChartProps> = ({
       // Используем reduce вместо Math.min(...array) для избежания переполнения стека
       return timestamps.reduce((min, ts) => Math.min(min, ts), timestamps[0]);
     } catch (error) {
-      console.error('[CHART] Ошибка при вычислении baseTs:', error);
       return null;
     }
   }, [realTimeData]);
@@ -544,7 +543,6 @@ export const Chart: React.FC<ChartProps> = ({
       }
       return [x, y];
     } catch (error) {
-      console.error('[CHART] Ошибка при подготовке данных:', error);
       return [[], []];
     }
   }, [isFetalHr, realTimeData, baseTs]);
@@ -637,12 +635,10 @@ export const Chart: React.FC<ChartProps> = ({
     // Устанавливаем дефолтный диапазон X, если не заданы внешние ограничения
     if (typeof xMin !== 'number' && typeof xMax !== 'number') {
       u.setScale('x', { min: 0, max: 50 });
-      console.log('set 1');
     }
 
     const fit = () => {
       if (!chartRef.current || !u) return;
-      console.log('fit');
       u.setSize({ width: chartRef.current.offsetWidth, height: chartHeight });
     };
 
@@ -674,7 +670,6 @@ export const Chart: React.FC<ChartProps> = ({
           const dataMax = xs[xs.length - 1];
           const newMax = dataMax;
           const newMin = 0;
-          console.log('set 3');
           u.setScale('x', { min: newMin, max: newMax });
         }
       }
@@ -698,7 +693,6 @@ export const Chart: React.FC<ChartProps> = ({
     if (!xs?.length) return;
     const last = xs[xs.length - 1];
 
-    console.log('set 4' + last);
     u.setScale('x', { min: 0, max: last });
   }, [chartData]);
 

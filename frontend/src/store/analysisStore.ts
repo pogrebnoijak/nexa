@@ -34,7 +34,6 @@ export const useAnalysisStore = create<AnalysisStore>()(
       },
 
       clearData: () => {
-        console.log('clearData');
         set({
           data: null,
           error: null,

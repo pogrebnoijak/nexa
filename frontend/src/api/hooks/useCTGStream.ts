@@ -61,7 +61,6 @@ export const useCTGStream = (ktgId: string, keepDataOnDisconnect: boolean = fals
   useEffect(() => {
     if (!ktgId) {
       // НИКОГДА не очищаем данные - только останавливаем стриминг
-      console.log('[USE_CTG_STREAM] ktgId пустой, но НЕ очищаем данные');
       setIsStreaming(false);
       setError(null);
       return;
@@ -71,7 +70,6 @@ export const useCTGStream = (ktgId: string, keepDataOnDisconnect: boolean = fals
     subscribeToCTGStream(ktgId, handleCTGData);
 
     // НИКОГДА не очищаем данные при смене КТГ
-    console.log('[USE_CTG_STREAM] НЕ очищаем данные при смене КТГ');
 
     return () => {
       // Очищаем таймаут батча

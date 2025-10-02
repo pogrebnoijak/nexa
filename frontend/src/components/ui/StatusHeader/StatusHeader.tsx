@@ -57,9 +57,7 @@ export const StatusHeader: React.FC<StatusHeaderProps> = ({
 
   // Таймер для состояния "Идет запись"
   useEffect(() => {
-    console.log('[STATUS HEADER] Статус изменился:', status);
     if (status === 'recording') {
-      console.log('[STATUS HEADER] Запускаем таймер');
       setCurrentTime('00:00'); // Сброс при старте
       const interval = setInterval(() => {
         setCurrentTime((prev) => {
@@ -74,11 +72,9 @@ export const StatusHeader: React.FC<StatusHeaderProps> = ({
       }, 1000);
 
       return () => {
-        console.log('[STATUS HEADER] Очищаем таймер');
         clearInterval(interval);
       };
     } else {
-      console.log('[STATUS HEADER] Статус не recording, таймер не запускается');
     }
   }, [status]);
 

@@ -16,12 +16,10 @@ export const usePing = () => {
       if (response.success) {
         setPingResult(response.data);
       } else {
-        console.error('Ping failed:', response.error);
         setPingError(response.error || 'Ping request failed');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown ping error';
-      console.error('Ping error:', errorMessage);
       setPingError(errorMessage);
     } finally {
       setIsPinging(false);

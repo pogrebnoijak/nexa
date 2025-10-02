@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { UserIcon, CalendarIcon } from '../../icons';
 import { analysisService } from '../../api';
 import styles from './MainPage.module.scss';
 
 export const MainPage: React.FC = () => {
-  const navigate = useNavigate();
-
   // Состояние для данных с API
   const [ktgIds, setKtgIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,8 +34,6 @@ export const MainPage: React.FC = () => {
             data = responseData.data;
           }
 
-          console.log('Полученные данные от API:', response.data);
-          console.log('Обработанные данные:', data);
           setKtgIds(data);
         } else {
           setError(response.error || 'Не удалось загрузить список КТГ');
@@ -46,8 +41,6 @@ export const MainPage: React.FC = () => {
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Ошибка при загрузке данных';
         setError(errorMessage);
-        console.error('Ошибка загрузки КТГ ID:', err);
-        console.error('Тип ошибки:', typeof err);
       } finally {
         setIsLoading(false);
       }

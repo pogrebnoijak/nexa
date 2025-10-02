@@ -17,7 +17,6 @@ class HttpClientImpl implements HttpClient {
     config?: Partial<RequestConfig>
   ): Promise<ApiResponse<T>> {
     const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
-    console.log(`[HTTP CLIENT] ${method} запрос к: ${fullUrl}`);
     const timeout = config?.timeout || this.defaultTimeout;
 
     // Используем переданный AbortController или создаем новый с timeout

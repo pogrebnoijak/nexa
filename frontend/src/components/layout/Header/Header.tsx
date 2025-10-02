@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '../../ui/Button';
 import { NexaIcon, ChevronDownIcon, ChevronRightIcon, SunIcon, ProfileIcon } from '../../../icons';
 import styles from './Header.module.scss';
@@ -46,7 +46,6 @@ export const Header: React.FC<HeaderProps> = ({ breadcrumbItems, hideLogo = fals
 
 // Компонент хлебных крошек
 const Breadcrumb: React.FC<{ items?: string[] }> = ({ items }) => {
-  const navigate = useNavigate();
   const breadcrumbItems = items || ['Пациенты', 'КТГ ID 123455'];
 
   const getBreadcrumbLink = (item: string, index: number) => {
