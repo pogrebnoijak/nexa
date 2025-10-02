@@ -1,0 +1,168 @@
+@use '../../styles/variables' as *;
+
+.page {
+  height: 100vh;
+  background-color: var(--color-background-main);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.main {
+  flex: 1;
+  padding: 0;
+}
+
+.statusHeader {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+.container {
+  width: 100%;
+  max-width: 1920px;
+  padding: $spacing-md;
+  padding-top: 0;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.content {
+  flex: 1;
+  height: 100%;
+  min-width: 0; // Позволяет flex элементу сжиматься
+}
+
+.charts {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  background-color: var(--color-background-white);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.sidebar {
+  width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.indicators {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  &__row {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  // Фиксированная ширина для карточек
+  :global(.card) {
+    width: 14rem;
+    flex-shrink: 0;
+  }
+}
+
+.annotations {
+  width: 100%;
+  flex-shrink: 0;
+  min-height: 276px;
+}
+
+.analysisBlocks {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 16px;
+
+  &__left {
+    width: 744px;
+    flex-shrink: 0;
+  }
+
+  &__right {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // Адаптивный layout: если прогноз меньше 200px, переносим его под риски
+  @media (max-width: 1470px) {
+    flex-direction: column;
+    gap: 16px;
+
+    &__left {
+      width: 100%;
+    }
+
+    &__right {
+      width: 100%;
+    }
+  }
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-xl) {
+  .container {
+    grid-template-columns: 1fr 400px;
+    gap: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    padding: 0 $spacing-md;
+  }
+
+  .indicators {
+    &__row {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+
+  .annotations {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .container {
+    padding: $spacing-sm;
+    gap: $spacing-sm;
+  }
+
+  .sidebar {
+    gap: $spacing-sm;
+  }
+
+  .charts {
+    gap: $spacing-md;
+  }
+
+  .chart {
+    padding: $spacing-md;
+  }
+
+  .indicators {
+    gap: $spacing-md;
+
+    &__row {
+      gap: $spacing-sm;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .container {
+    padding: $spacing-xs;
+  }
+}

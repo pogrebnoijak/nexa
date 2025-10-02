@@ -1,0 +1,115 @@
+@use '../../../styles/variables' as *;
+
+.statusHeader {
+  width: 100%;
+  padding: $spacing-sm 0 $spacing-lg 0;
+  border-radius: 16px;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &__title {
+    color: var(--color-text-primary);
+    font-size: 32px;
+    font-family: Inter;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: Inter;
+    font-weight: 500;
+    line-height: 24px;
+
+    &--recording {
+      background: #f5f9ff;
+      color: #3d434a;
+    }
+
+    &--completed {
+      background: #f5f9ff;
+      color: #3d434a;
+    }
+
+    // Табличные цифры для таймера
+    span:last-child {
+      font-variant-numeric: tabular-nums;
+      min-width: 2.5em;
+      text-align: center;
+    }
+  }
+
+  &__indicator {
+    width: 12px;
+    height: 12px;
+    background: #e01c1c;
+    border-radius: 50%;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__completeButton,
+  &__uploadButton {
+    color: var(--color-text-primary);
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6) !important;
+    border-radius: 8px;
+    box-shadow: 0px 0px 28px rgba(99, 133, 187, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex !important;
+    align-items: center !important;
+    gap: $spacing-md !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.6) !important;
+      transform: translateY(-1px);
+      box-shadow: 0px 0px 28px rgba(99, 133, 187, 0.2), 0px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .statusHeader__icon {
+      width: 12px;
+      height: 12px;
+      background: #1a1e22;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    // Переопределяем стили для span внутри кнопки
+    span {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+    }
+  }
+}

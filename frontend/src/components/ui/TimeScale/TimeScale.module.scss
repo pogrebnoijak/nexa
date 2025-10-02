@@ -1,0 +1,111 @@
+@use '../../../styles/variables' as *;
+
+.scale {
+  display: flex;
+  align-items: center;
+  height: 32px;
+
+  &__button {
+    width: 33px;
+    height: 32px;
+    background-color: var(--color-background-light);
+    border: none;
+    border-radius: 120px 0 0 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    color: var(--color-icon-secondary);
+
+    &:hover {
+      background-color: var(--color-background-grey);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &:first-child {
+      cursor: default;
+    }
+
+    &:last-child {
+      border-radius: 0 120px 120px 0;
+    }
+  }
+
+  &__track {
+    flex: 1;
+    height: 32px;
+    background-color: var(--color-background-light);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    cursor: default;
+  }
+
+  &__range {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: rgba(0, 135, 214, 0.08);
+    border-left: 1px solid var(--color-chart-blue);
+    border-right: 1px solid var(--color-chart-blue);
+    border-radius: 0;
+    cursor: move;
+    transition: border-color 0.2s ease-in-out;
+
+    &:hover {
+      border-left-color: var(--color-primary);
+      border-right-color: var(--color-primary);
+    }
+  }
+
+  &__handle {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    background-color: transparent;
+    cursor: ew-resize;
+    border-radius: 2px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -6px;
+      right: -6px;
+      height: 100%;
+      background: transparent;
+      cursor: ew-resize;
+    }
+  }
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-md) {
+  .scale {
+    height: 28px;
+
+    &__button {
+      width: 28px;
+      height: 28px;
+    }
+
+    &__track {
+      height: 28px;
+      padding: 0 $spacing-md;
+    }
+
+    &__range {
+      height: 18px;
+    }
+
+    &__handle {
+      width: 6px;
+    }
+  }
+}

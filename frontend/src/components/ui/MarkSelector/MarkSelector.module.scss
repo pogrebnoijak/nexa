@@ -1,0 +1,139 @@
+@use '../../../styles/variables' as *;
+
+.selector {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: $font-family-primary;
+  font-weight: 500;
+  color: #1a1e22;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+
+  &:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.triggerText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+}
+
+.content {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 999;
+  overflow: hidden;
+  min-width: 100%;
+  width: max-content;
+  max-width: 300px;
+}
+
+.search {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: $font-family-primary;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #3b82f6;
+  }
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+}
+
+.list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-family: $font-family-primary;
+  color: #1a1e22;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &Selected {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+}
+
+.checkmark {
+  color: #22c55e;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.empty {
+  padding: 16px 12px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  font-family: $font-family-primary;
+}
+
+.emptyHint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+}

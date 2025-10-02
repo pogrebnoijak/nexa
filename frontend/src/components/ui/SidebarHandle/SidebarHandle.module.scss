@@ -1,0 +1,80 @@
+@use '../../../styles/variables' as *;
+
+.handle {
+  position: fixed;
+  left: 0px; // Показываем всю ручку
+  width: 45px;
+  height: 82px;
+  background: white;
+  cursor: grab;
+  z-index: 1001; // Выше меню
+  transition: left 0.3s ease, background-color 0.2s ease;
+  user-select: none;
+  border-radius: 0 24px 24px 0;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
+  clip-path: inset(-20px -20px -20px 0);
+
+  // Ручка всегда прикреплена к правому краю меню
+  &[data-state='opened'] {
+    left: 283px; // Позиция справа от меню (283px ширина меню)
+  }
+
+  // Обычное состояние - ручка слева
+  &[data-state='default'] {
+    left: 0px; // Показываем ручку слева
+  }
+
+  // Скрытое состояние - ручка не видна
+  &[data-state='hidden'] {
+    visibility: hidden;
+    left: 283px;
+  }
+
+  &:hover {
+    background: #f3f6fb;
+    box-shadow: 2px 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &[data-state='pressed'],
+  &[data-state='pressed-closed'],
+  &[data-state='pressed-opened'] {
+    background: #e7ecf7;
+    cursor: grabbing;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  // Состояние перетаскивания при закрытом меню
+  &[data-state='pressed-closed'] {
+    left: 0px;
+  }
+
+  // Состояние перетаскивания при открытом меню
+  &[data-state='pressed-opened'] {
+    left: 283px;
+  }
+
+  &__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__svg {
+    width: 20px;
+    height: 20px;
+    color: #102325;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &__svg--burger {
+    width: 15px;
+    height: 15px;
+  }
+}

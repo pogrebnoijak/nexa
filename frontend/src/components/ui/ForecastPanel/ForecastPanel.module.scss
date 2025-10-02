@@ -1,0 +1,57 @@
+@use '../../../styles/variables' as *;
+
+.panel {
+  height: 380px;
+  padding: 24px;
+  background: white;
+  box-shadow: 0px 0px 20px rgba(16.52, 80.38, 178.62, 0.15);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  // При ширине меньше 1470px убираем фиксированную высоту
+  @media (max-width: 1470px) {
+    height: auto;
+  }
+
+  &__title {
+    color: #696f79;
+    font-size: 14px;
+    font-family: $font-family-primary;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+}
+
+.forecast {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__title {
+    color: var(--color-text-primary);
+    font-size: 18px;
+    font-family: $font-family-primary;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__description {
+    color: #696f79;
+    font-size: 14px;
+    font-family: $font-family-primary;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+    white-space: pre-line;
+  }
+}

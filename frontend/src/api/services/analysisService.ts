@@ -1,0 +1,88 @@
+import { httpClient, buildUrl } from '../httpClient';
+import { API_ENDPOINTS } from '../constants';
+import { ApiResponse, RiskAnalysis, Forecast, Indicators } from '../types';
+
+export class AnalysisApiService {
+  // Получить список доступных КТГ ID
+  async getAvailableIds(): Promise<ApiResponse<string[]>> {
+    const url = '/analyze/ids';
+    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
+    return httpClient.get<string[]>(url);
+  }
+
+  // Получить анализ по конкретному ID
+  async getAnalysisById(ktgId: string): Promise<ApiResponse<any>> {
+    const url = `/analyze/ids/${ktgId}`;
+    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
+    return httpClient.get<any>(url);
+  }
+
+  // Сохранить данные КТГ (только для создания новых КТГ)
+  async saveKTGData(
+    ktgId: string,
+    data: {
+      ts: number[];
+      fhr: (number | null)[];
+      toco: (number | null)[];
+      stirrings: any[];
+      meta: any;
+    }
+  ): Promise<ApiResponse<any>> {
+    // ПРОВЕРКА: Если передан ID (не пустой), НЕ делаем запрос
+    if (ktgId && ktgId.trim() !== '') {
+      console.log(
+        `[ANALYSIS SERVICE] БЛОКИРОВКА: Попытка POST к /analyze/ids/${ktgId} - запрос отменен`
+      );
+      return {
+        success: false,
+        error: 'POST запросы к /analyze/ids/{id} запрещены',
+        data: null,
+      };
+    }
+
+    // Всегда используем /analyze/ids (только для создания новых КТГ)
+    const url = '/analyze/ids';
+    console.log(`[ANALYSIS SERVICE] POST запрос к URL: ${url}`, data);
+    return httpClient.post<any>(url, data);
+  }
+
+  // Получить полный анализ
+  async getAnalysis(ktgId: string): Promise<ApiResponse<any>> {
+    const url = `${API_ENDPOINTS.ANALYSIS.ANALYZE}?records=1&predicts=1`;
+    console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
+    return httpClient.get<any>(url);
+  }
+
+  // Получить анализ рисков
+  async getRisks(ktgId: string): Promise<ApiResponse<RiskAnalysis[]>> {
+    const url = buildUrl(API_ENDPOINTS.ANALYSIS.RISKS, { ktgId });
+    return httpClient.get<RiskAnalysis[]>(url);
+  }
+
+  // Получить прогнозы
+  async getForecasts(ktgId: string): Promise<ApiResponse<Forecast[]>> {
+    const url = buildUrl(API_ENDPOINTS.ANALYSIS.FORECAST, { ktgId });
+    return httpClient.get<Forecast[]>(url);
+  }
+
+  // Получить показатели
+  async getIndicators(ktgId: string): Promise<ApiResponse<Indicators>> {
+    const url = buildUrl(API_ENDPOINTS.ANALYSIS.INDICATORS, { ktgId });
+    return httpClient.get<Indicators>(url);
+  }
+
+  // Обновить анализ рисков
+  async updateRisks(ktgId: string, risks: RiskAnalysis[]): Promise<ApiResponse<RiskAnalysis[]>> {
+    const url = buildUrl(API_ENDPOINTS.ANALYSIS.RISKS, { ktgId });
+    return httpClient.put<RiskAnalysis[]>(url, risks);
+  }
+
+  // Обновить прогнозы
+  async updateForecasts(ktgId: string, forecasts: Forecast[]): Promise<ApiResponse<Forecast[]>> {
+    const url = buildUrl(API_ENDPOINTS.ANALYSIS.FORECAST, { ktgId });
+    return httpClient.put<Forecast[]>(url, forecasts);
+  }
+}
+
+// Создаем экземпляр сервиса
+export const analysisService = new AnalysisApiService();

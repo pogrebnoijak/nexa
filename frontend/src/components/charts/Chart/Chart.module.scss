@@ -1,0 +1,224 @@
+@use '../../../styles/variables' as *;
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__headerRight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__title {
+    color: var(--color-text-primary);
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin: 0;
+  }
+
+  &__streaming {
+    color: #27c840;
+    font-size: 12px;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+  }
+
+  &__container {
+    position: relative;
+    width: 100%;
+    height: 320px; // Увеличена высота для верхнего графика
+
+    // Для нижнего графика (тонус матки) используем меньшую высоту
+    &.chart__container--uterine-tone {
+      height: 200px; // Увеличена высота для нижнего графика
+    }
+  }
+
+  &__content {
+    display: flex;
+    height: 100%;
+    gap: $spacing-sm;
+  }
+
+  &__yAxis {
+    width: 28px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+
+  &__yAxisItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    position: relative;
+  }
+
+  &__yAxisLabel {
+    color: var(--color-text-secondary);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-normal;
+    line-height: 1.5;
+    text-align: right;
+    white-space: nowrap;
+    margin-right: -3px;
+  }
+
+  &__yAxisLine {
+    width: 5px;
+    height: 1px;
+    background-color: var(--color-border-medium);
+    opacity: 0;
+  }
+
+  &__plotArea {
+    flex: 1;
+    position: relative;
+    height: 100%;
+  }
+
+  &__grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  &__gridLine {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-border-light);
+    opacity: 0.3;
+  }
+
+  &__graph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &__xAxis {
+    width: 100%;
+    padding: 0 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: $spacing-sm;
+  }
+
+  &__xAxisItem {
+    width: 15px;
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    font-weight: $font-weight-medium;
+    line-height: 1.27;
+  }
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-lg) {
+  .chart {
+    &__yAxis {
+      width: 24px;
+    }
+
+    &__yAxisLabel {
+      font-size: 10px;
+    }
+
+    &__xAxis {
+      padding: 0 24px;
+    }
+
+    &__xAxisItem {
+      font-size: 10px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .chart {
+    &__title {
+      font-size: $font-size-base;
+    }
+
+    &__yAxis {
+      width: 20px;
+    }
+
+    &__yAxisLabel {
+      font-size: 9px;
+    }
+
+    &__xAxis {
+      padding: 0 20px;
+    }
+
+    &__xAxisItem {
+      font-size: 9px;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// Глобальные стили для тултипа (так как он создается динамически)
+:global(.chart-tooltip) {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  // Анимация появления
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  &[style*='display: block'] {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,13 @@
+fastapi
+pydantic
+uvicorn
+numpy
+pandas
+scikit-learn
+torch
+scipy
+sortedcontainers
+joblib
+starlette
+lightgbm
+websockets

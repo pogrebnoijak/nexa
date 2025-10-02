@@ -1,0 +1,363 @@
+@use 'variables' as *;
+
+/* Базовые стили */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-main);
+  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Типографика */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+}
+
+h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+h2 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+h3 {
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+}
+
+h4 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+h5 {
+  font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+}
+
+h6 {
+  font-size: clamp(0.75rem, 1.25vw, 1rem);
+}
+
+p {
+  margin: 0 0 $spacing-md 0;
+  line-height: $line-height-relaxed;
+}
+
+/* Ссылки */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Списки */
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Изображения */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Кнопки */
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+/* Поля ввода */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1920px;
+  padding: $spacing-lg;
+}
+
+/* Flex утилиты */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+/* Grid утилиты */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gap-4 {
+  gap: $spacing-sm;
+}
+
+.gap-6 {
+  gap: $spacing-md;
+}
+
+.gap-8 {
+  gap: $spacing-lg;
+}
+
+/* Отступы */
+.p-4 {
+  padding: $spacing-sm;
+}
+
+.p-6 {
+  padding: $spacing-md;
+}
+
+.p-8 {
+  padding: $spacing-lg;
+}
+
+.px-4 {
+  padding-left: $spacing-sm;
+  padding-right: $spacing-sm;
+}
+
+.px-6 {
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+}
+
+.py-4 {
+  padding-top: $spacing-sm;
+  padding-bottom: $spacing-sm;
+}
+
+.py-6 {
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+}
+
+.m-4 {
+  margin: $spacing-sm;
+}
+
+.m-6 {
+  margin: $spacing-md;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Размеры */
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* Скругления */
+.rounded {
+  border-radius: $border-radius-sm;
+}
+
+.rounded-md {
+  border-radius: $border-radius-md;
+}
+
+.rounded-lg {
+  border-radius: $border-radius-lg;
+}
+
+.rounded-xl {
+  border-radius: $border-radius-xl;
+}
+
+.rounded-full {
+  border-radius: $border-radius-full;
+}
+
+/* Тени */
+.shadow-sm {
+  box-shadow: $shadow-sm;
+}
+
+.shadow-md {
+  box-shadow: $shadow-md;
+}
+
+.shadow-lg {
+  box-shadow: $shadow-lg;
+}
+
+/* Фоны */
+.bg-white {
+  background-color: var(--color-background-white);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-light {
+  background-color: var(--color-background-light);
+}
+
+/* Текст */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-medium {
+  font-weight: $font-weight-medium;
+}
+
+.font-semibold {
+  font-weight: $font-weight-semibold;
+}
+
+/* Адаптивность */
+@media (max-width: $breakpoint-lg) {
+  .container {
+    padding: 0 $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .container {
+    padding: 0 $spacing-sm;
+  }
+}

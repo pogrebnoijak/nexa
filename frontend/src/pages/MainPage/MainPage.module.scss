@@ -1,0 +1,314 @@
+@use '../../styles/variables' as *;
+
+.page {
+  width: calc(100% - 283px);
+  position: relative;
+  background: #deebff;
+  overflow: hidden;
+  margin-left: 283px;
+}
+
+.container {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  display: inline-flex;
+  width: 100%;
+  padding: 0 $spacing-lg;
+}
+
+.header {
+  align-self: stretch;
+  height: 76px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-right: 32px;
+  justify-content: space-between;
+  align-items: center;
+  display: inline-flex;
+}
+
+.breadcrumb {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+  display: flex;
+
+  span {
+    color: rgba(9, 15, 24, 0.48);
+    font-size: 12px;
+    font-family: Inter;
+    font-weight: 500;
+    line-height: 16px;
+  }
+}
+
+.headerActions {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+  display: flex;
+}
+
+.themeToggle {
+  width: 48px;
+  padding: 4px;
+  background: #e3e6e6;
+  border-radius: 1000px;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+}
+
+.toggleButton {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 1000px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+}
+
+.userProfile {
+  height: 52px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  overflow: hidden;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  display: flex;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 100px;
+  background-image: url(https://placehold.co/44x44);
+
+  img {
+    width: 44px;
+    height: 44px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+  }
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: flex;
+}
+
+.content {
+  align-self: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 24px;
+  display: flex;
+}
+
+.titleSection {
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 24px;
+  display: inline-flex;
+}
+
+.title {
+  flex: 1 1 0;
+  border-radius: 16px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: inline-flex;
+
+  h1 {
+    color: black;
+    font-size: 32px;
+    font-family: Inter;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.newKTGButton {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background: #1990ff;
+  border-radius: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  display: flex;
+  border: none;
+  cursor: pointer;
+
+  color: white;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.recordsList {
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+  display: inline-flex;
+}
+
+.loadingMessage,
+.errorMessage,
+.emptyMessage {
+  align-self: stretch;
+  padding: 32px;
+  text-align: center;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 500;
+  border-radius: 12px;
+}
+
+.loadingMessage {
+  color: rgba(9, 15, 24, 0.64);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.errorMessage {
+  color: #ff5f57;
+  background: rgba(255, 95, 87, 0.1);
+}
+
+.emptyMessage {
+  color: rgba(9, 15, 24, 0.48);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.recordCard {
+  align-self: stretch;
+  padding: 24px;
+  background: white;
+  box-shadow: 0px 0px 20px rgba(17, 80, 179, 0.15);
+  border-radius: 12px;
+  justify-content: space-between;
+  align-items: center;
+  display: inline-flex;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 24px rgba(17, 80, 179, 0.2);
+  }
+}
+
+.recordId {
+  width: 176px;
+  align-self: stretch;
+  color: black;
+  font-size: 18px;
+  font-family: Inter;
+  font-weight: 600;
+}
+
+.patientInfo {
+  align-self: stretch;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+}
+
+.patientIcon {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+  margin-top: -2px;
+}
+
+.patientName {
+  width: 224px;
+  align-self: stretch;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  font-size: 12px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.weeks {
+  width: 80px;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  font-size: 12px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.status {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-radius: 100px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+
+  color: white;
+  font-size: 14px;
+  font-family: Inter;
+  font-weight: 500;
+}
+
+.dateInfo {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+}
+
+.dateIcon {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+  margin-top: -2px;
+}
+
+.date {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: rgba(9, 15, 24, 0.48);
+  font-size: 12px;
+  font-family: Inter;
+  font-weight: 500;
+  line-height: 16px;
+}

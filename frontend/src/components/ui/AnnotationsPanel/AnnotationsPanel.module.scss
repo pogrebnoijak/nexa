@@ -1,0 +1,92 @@
+@use '../../../styles/variables' as *;
+
+.panel {
+  background-color: var(--color-background-white);
+  border-radius: 12px;
+  box-shadow: 0px 0px 20px rgba(16.52, 80.38, 178.62, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  height: 724px;
+
+  // При ширине меньше 1470px убираем фиксированную высоту
+  @media (max-width: 1470px) {
+    height: auto;
+    min-height: 300px;
+  }
+
+  &__title {
+    padding: $spacing-lg 0 0 $spacing-lg;
+    color: #696f79;
+    font-size: 14px;
+    font-family: $font-family-primary;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__content {
+    padding: 0 $spacing-lg $spacing-lg $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__item {
+    padding: 16px;
+    background: #f5f6f7;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__time {
+    color: #696f79;
+    font-size: 14px;
+    font-family: $font-family-primary;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  &__event {
+    color: var(--color-text-primary);
+    font-size: 18px;
+    font-family: $font-family-primary;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__value {
+    display: none; // Скрываем value, так как в новом дизайне его нет
+  }
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-lg) {
+  .panel {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .panel {
+    padding: $spacing-md;
+    gap: $spacing-md;
+
+    &__item {
+      padding: $spacing-xs;
+      gap: $spacing-sm;
+    }
+
+    &__time,
+    &__event,
+    &__value {
+      font-size: $font-size-xs;
+    }
+  }
+}
