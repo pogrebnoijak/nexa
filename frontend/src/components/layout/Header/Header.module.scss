@@ -8,7 +8,6 @@
 
   &__content {
     height: 100%;
-    max-width: 1920px;
     margin: 0 auto;
     padding: $spacing-md $spacing-lg;
     display: flex;
@@ -115,9 +114,28 @@
     font-weight: $font-weight-medium;
     line-height: 1.33;
     transition: color 0.2s ease-in-out;
+    text-decoration: none;
 
     &--active {
       color: var(--color-text-primary);
+    }
+
+    &--link {
+      color: var(--color-text-quaternary);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-text-primary);
+        text-decoration: none;
+      }
+
+      &:visited {
+        color: var(--color-text-quaternary);
+      }
+
+      &:focus {
+        outline: none;
+      }
     }
   }
 }

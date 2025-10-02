@@ -1,0 +1,142 @@
+@use '../../../styles/variables' as *;
+
+.fisherCard {
+  align-self: stretch;
+  height: 128px;
+  padding: 20px 24px;
+  background: white;
+  box-shadow: 0px 0px 20px rgba(16.52, 80.38, 178.62, 0.15);
+  border-radius: 12px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  display: inline-flex;
+  width: 100%;
+
+  &__header {
+    align-self: stretch;
+    justify-content: space-between;
+    align-items: flex-start;
+    display: inline-flex;
+  }
+
+  &__title {
+    color: #696f79;
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 500;
+    word-wrap: break-word;
+  }
+
+  &__status {
+    padding: 2px 12px 4px 12px;
+    border-radius: 100px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+  }
+
+  &__statusText {
+    color: white;
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 500;
+    word-wrap: break-word;
+  }
+
+  &__content {
+    align-self: stretch;
+    height: 54px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    display: flex;
+  }
+
+  &__score {
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 8px;
+    display: flex;
+  }
+
+  &__scoreValue {
+    color: black;
+    font-size: 44px;
+    font-family: Inter;
+    font-weight: 500;
+    word-wrap: break-word;
+  }
+
+  &__scoreMax {
+    color: #696f79;
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 500;
+    word-wrap: break-word;
+  }
+
+  &__separator {
+    align-self: stretch;
+    transform-origin: top left;
+    border-left: 1px #dfdfdf solid;
+  }
+
+  &__description {
+    width: 348px;
+    color: #696f79;
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 500;
+    word-wrap: break-word;
+  }
+}
+
+// Адаптивность
+@media (max-width: $breakpoint-lg) {
+  .fisherCard {
+    height: 112px;
+    padding: 16px 20px;
+    gap: 12px;
+
+    &__scoreValue {
+      font-size: 36px;
+    }
+
+    &__description {
+      width: 280px;
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .fisherCard {
+    height: 96px;
+    padding: 12px 16px;
+    gap: 8px;
+
+    &__title {
+      font-size: 13px;
+    }
+
+    &__statusText {
+      font-size: 13px;
+    }
+
+    &__scoreValue {
+      font-size: 28px;
+    }
+
+    &__scoreMax {
+      font-size: 13px;
+    }
+
+    &__description {
+      width: 200px;
+      font-size: 12px;
+    }
+  }
+}

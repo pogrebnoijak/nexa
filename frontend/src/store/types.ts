@@ -72,4 +72,5 @@ export interface AnalysisActions {
   clearData: () => void;
   updatePartialData: (partialData: Partial<AnalysisData>) => void;
   addWebSocketData: (ts: number, fhr: number, toco: number | null) => void;
+  flushWebSocketData: () => void;
 }

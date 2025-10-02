@@ -54,19 +54,73 @@ export const useAnalysisStore = create<AnalysisStore>()(
 
       addWebSocketData: (ts: number, fhr: number, toco: number | null) => {
         const currentData = get().data;
-        const existingTs = currentData?.ts || [];
-        const existingFhr = currentData?.fhr || [];
-        const existingToco = currentData?.toco || [];
 
+        // Если данных нет, создаем новые массивы
+        if (!currentData) {
+          set({
+            data: {
+              baseline: 0,
+              stv: 0,
+              ltv: 0,
+              rmssd: 0,
+              amp: 0,
+              freq: 0,
+              num_decel: 0,
+              num_accel: 0,
+              contractions: [],
+              events: [],
+              fisher_points: null,
+              data_quality: 1.0,
+              proba_short: null,
+              proba_short_cnn: null,
+              proba_long: null,
+              stirrings: [],
+              meta: null,
+              ts: [ts],
+              fhr: [fhr],
+              toco: [toco],
+            } as AnalysisData,
+            lastUpdated: Date.now(),
+          });
+          return;
+        }
+
+        // Простое добавление данных (батчинг происходит на уровне WebSocket)
+        const existingTs = currentData.ts || [];
+        const existingFhr = currentData.fhr || [];
+        const existingToco = currentData.toco || [];
+
+        // Добавляем данные в массивы
+        existingTs.push(ts);
+        existingFhr.push(fhr);
+        existingToco.push(toco);
+
+        // Обновляем store сразу (батчинг уже произошел на уровне WebSocket)
         set({
           data: {
             ...currentData,
-            ts: [...existingTs, ts],
-            fhr: [...existingFhr, fhr],
-            toco: [...existingToco, toco],
-          } as AnalysisData,
+            ts: existingTs,
+            fhr: existingFhr,
+            toco: existingToco,
+          },
           lastUpdated: Date.now(),
         });
+      },
+
+      // Принудительное обновление store (для завершения потока)
+      flushWebSocketData: () => {
+        const currentData = get().data;
+        if (currentData) {
+          set({
+            data: {
+              ...currentData,
+              ts: currentData.ts,
+              fhr: currentData.fhr,
+              toco: currentData.toco,
+            },
+            lastUpdated: Date.now(),
+          });
+        }
       },
     }),
     {

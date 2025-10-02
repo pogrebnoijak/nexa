@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Header } from '../../components/layout/Header';
 import { Chart } from '../../components/charts/Chart';
 import { IndicatorCard } from '../../components/ui/IndicatorCard';
+import { FisherCard } from '../../components/ui/FisherCard';
 import { AnnotationsPanel } from '../../components/ui/AnnotationsPanel';
 import { TimeScale } from '../../components/ui/TimeScale';
 import { StatusHeader } from '../../components/ui/StatusHeader';
@@ -68,10 +69,21 @@ export const HomePage: React.FC = () => {
     data: ctgStreamData,
     isStreaming,
     error: streamError,
-  } = useCTGStream(ktgStatus === 'recording' ? actualKtgId || ktgId : '', ktgStatus !== 'idle');
+  } = useCTGStream(actualKtgId || ktgId, ktgStatus === 'completed' || ktgStatus === 'recording');
+
+  // Отладочная информация для useCTGStream
+  useEffect(() => {
+    console.log('[HOMEPAGE] useCTGStream параметры:', {
+      ktgId: actualKtgId || ktgId,
+      keepDataOnDisconnect: ktgStatus === 'completed' || ktgStatus === 'recording',
+      ktgStatus,
+    });
+  }, [actualKtgId, ktgId, ktgStatus]);
 
   // Проверяем, является ли КТГ существующей при загрузке компонента
   useEffect(() => {
+    const abortController = new AbortController();
+
     const checkExistingKTG = async () => {
       if (!ktgId) return;
 
@@ -87,16 +99,39 @@ export const HomePage: React.FC = () => {
         setIsLoadingExistingData(true);
         console.log(`[HOMEPAGE] Проверяем существующую КТГ с ID: ${ktgId}`);
 
-        // Пытаемся получить данные анализа для этого ID
-        const result = await analysisService.getAnalysisById(ktgId);
+        // Двухэтапная загрузка для существующих КТГ
+        console.log('[HOMEPAGE] Этап 1: Быстрая загрузка основных данных');
+        const result = await analysisService.getAnalysisById(ktgId, abortController.signal);
+
+        // Проверяем, не был ли запрос отменен
+        if (abortController.signal.aborted) {
+          console.log('[HOMEPAGE] Запрос отменен при размонтировании');
+          return;
+        }
 
         if (result.success && result.data) {
           console.log(`[HOMEPAGE] Найдена существующая КТГ, устанавливаем статус completed`);
           // Устанавливаем статус как завершенную
           setKtgStatus('completed');
 
-          // Сохраняем данные анализа в store
+          // Сохраняем основные данные анализа в store
           setAnalysisData(result.data);
+
+          // Сразу запрашиваем predicts для графиков
+          console.log('[HOMEPAGE] Этап 2: Загрузка predicts и графиков');
+          try {
+            const predictsResult = await analysisService.getAnalysisPredicts(
+              ktgId,
+              abortController.signal
+            );
+
+            if (predictsResult.success && predictsResult.data) {
+              updatePartialData(predictsResult.data);
+            }
+          } catch (predictsError) {
+            console.warn('[HOMEPAGE] Ошибка загрузки predicts:', predictsError);
+            // Не критично, основные данные уже загружены
+          }
 
           toast.success(`КТГ ID ${ktgId} загружена из архива`);
         } else {
@@ -105,15 +140,27 @@ export const HomePage: React.FC = () => {
           setKtgStatus('idle');
         }
       } catch (error) {
+        // Игнорируем ошибки отмены запроса
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('[HOMEPAGE] Запрос отменен');
+          return;
+        }
+
         console.error(`[HOMEPAGE] Ошибка при проверке существующей КТГ:`, error);
-        // В случае ошибки устанавливаем статус idle
-        setKtgStatus('idle');
+        // В случае ошибки устанавливаем статус completed (запись была проведена)
+        setKtgStatus('completed');
       } finally {
-        setIsLoadingExistingData(false);
+        if (!abortController.signal.aborted) {
+          setIsLoadingExistingData(false);
+        }
       }
     };
 
     checkExistingKTG();
+
+    return () => {
+      abortController.abort();
+    };
   }, [ktgId, isNewKTG]);
 
   // Функция сохранения данных КТГ (используется при любом завершении записи)
@@ -156,18 +203,24 @@ export const HomePage: React.FC = () => {
 
   // Очистка при размонтировании компонента
   useEffect(() => {
+    // Создаем AbortController для отмены запросов
+    const abortController = new AbortController();
+
     return () => {
       console.log('[HOMEPAGE] Размонтирование компонента, выполняем очистку');
+
+      // Отменяем все активные запросы
+      abortController.abort();
 
       // Отключаем WebSocket если подключен
       if (ctgStreamClient.isConnected) {
         ctgStreamClient.disconnect();
       }
 
-      // Очищаем данные анализа в store
-      clearData();
+      // НИКОГДА не очищаем данные при размонтировании - только при навигации
+      console.log('[HOMEPAGE] НЕ очищаем данные при размонтировании компонента');
     };
-  }, []);
+  }, [ktgStatus]);
 
   // Обработчик начала записи
   const handleStartRecording = useCallback(async () => {
@@ -200,6 +253,12 @@ export const HomePage: React.FC = () => {
           // Устанавливаем статус recording только после успешного создания КТГ
           console.log('[HOMEPAGE] Устанавливаем статус recording для нового КТГ');
           setKtgStatus('recording');
+
+          // Дополнительная принудительная установка через небольшую задержку
+          setTimeout(() => {
+            console.log('[HOMEPAGE] Принудительная установка статуса для нового КТГ');
+            setKtgStatus('recording');
+          }, 100);
         } else {
           throw new Error('Сервер не вернул ID нового КТГ');
         }
@@ -212,12 +271,20 @@ export const HomePage: React.FC = () => {
       // Для существующих КТГ устанавливаем статус recording сразу
       console.log('[HOMEPAGE] Устанавливаем статус recording для существующего КТГ');
       setKtgStatus('recording');
+
+      // Дополнительная принудительная установка через небольшую задержку
+      setTimeout(() => {
+        console.log('[HOMEPAGE] Принудительная установка статуса для существующего КТГ');
+        setKtgStatus('recording');
+      }, 100);
     }
 
     // Подключаемся к WebSocket
     if (!ctgStreamClient.isConnected) {
       try {
+        console.log('[HOMEPAGE] Подключение к WebSocket...');
         await ctgStreamClient.connect();
+        console.log('[HOMEPAGE] WebSocket подключен успешно');
         setIsWebSocketConnected(true);
 
         // Обработчик отключения WebSocket
@@ -261,11 +328,21 @@ export const HomePage: React.FC = () => {
           setIsWebSocketConnected(ctgStreamClient.isConnected);
         }, 100);
       } catch (err) {
+        console.error('[HOMEPAGE] Ошибка подключения к WebSocket:', err);
         setIsWebSocketConnected(false);
+        // Не сбрасываем статус, если WebSocket не подключился - запись может продолжаться
+        console.log('[HOMEPAGE] WebSocket не подключился, но запись продолжается');
       }
     } else {
+      console.log('[HOMEPAGE] WebSocket уже подключен');
       setIsWebSocketConnected(true);
     }
+
+    // Дополнительная проверка статуса через небольшую задержку
+    setTimeout(() => {
+      console.log('[HOMEPAGE] Финальная проверка - принудительно устанавливаем статус recording');
+      setKtgStatus('recording');
+    }, 200);
   }, [isNewKTG, actualKtgId, navigate]);
 
   // Обработчик завершения записи
@@ -470,18 +547,34 @@ export const HomePage: React.FC = () => {
 
   // Периодический запрос к /analyze каждые 10 секунд при активном WebSocket (только для существующих КТГ)
   useEffect(() => {
+    console.log('[HOMEPAGE] useEffect для периодических запросов:', { ktgStatus, isNewKTG });
     if (ktgStatus !== 'recording' || isNewKTG) {
+      console.log('[HOMEPAGE] Периодические запросы не запускаются:', { ktgStatus, isNewKTG });
       return;
     }
+
+    console.log('[HOMEPAGE] Запускаем периодические запросы');
+
+    const abortController = new AbortController();
 
     const fetchAnalysis = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const result = await analysisService.getAnalysis(actualKtgId || ktgId);
+        console.log('[HOMEPAGE] Этап 1: Быстрый запрос основных данных');
+        const result = await analysisService.getAnalysisFast(
+          actualKtgId || ktgId,
+          abortController.signal
+        );
 
-        // Сохраняем данные в стейт менеджер
+        // Проверяем, не был ли запрос отменен
+        if (abortController.signal.aborted) {
+          console.log('[HOMEPAGE] Запрос анализа отменен при размонтировании');
+          return;
+        }
+
+        // Сохраняем основные данные в стейт менеджер
         if (result.success && result.data) {
           // Используем updatePartialData чтобы не стереть WebSocket данные
           if (analysisData) {
@@ -502,30 +595,92 @@ export const HomePage: React.FC = () => {
             // Если данных еще нет, используем setAnalysisData
             setAnalysisData(result.data);
           }
-        } else {
-          setError('Не удалось получить данные анализа');
+        }
+
+        // Сразу после быстрого запроса запрашиваем predicts
+        console.log('[HOMEPAGE] Этап 2: Запрос predicts и графиков');
+        try {
+          const predictsResult = await analysisService.getAnalysisPredicts(
+            actualKtgId || ktgId,
+            abortController.signal
+          );
+
+          if (abortController.signal.aborted) {
+            console.log('[HOMEPAGE] Запрос predicts отменен при размонтировании');
+            return;
+          }
+
+          // Обновляем данными predicts
+          if (predictsResult.success && predictsResult.data) {
+            updatePartialData(predictsResult.data);
+          }
+        } catch (predictsError) {
+          console.warn('[HOMEPAGE] Ошибка загрузки predicts:', predictsError);
+          // Не критично, основные данные уже загружены
         }
       } catch (error) {
+        // Игнорируем ошибки отмены запроса
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('[HOMEPAGE] Запрос анализа отменен');
+          return;
+        }
+
         setError(
           `Ошибка получения анализа: ${
             error instanceof Error ? error.message : 'Неизвестная ошибка'
           }`
         );
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     // Первый запрос сразу
     fetchAnalysis();
 
-    // Запрос каждые 10 секунд
-    const intervalId = setInterval(() => {
-      fetchAnalysis();
+    // Периодические запросы каждые 10 секунд (только быстрый запрос)
+    const intervalId = setInterval(async () => {
+      try {
+        console.log('[HOMEPAGE] Периодический быстрый запрос');
+        const result = await analysisService.getAnalysisFast(
+          actualKtgId || ktgId,
+          abortController.signal
+        );
+
+        if (abortController.signal.aborted) {
+          return;
+        }
+
+        if (result.success && result.data) {
+          if (analysisData) {
+            const existingTs = analysisData.ts || [];
+            const existingFhr = analysisData.fhr || [];
+            const existingToco = analysisData.toco || [];
+
+            updatePartialData({
+              ...result.data,
+              ts: result.data.ts && result.data.ts.length > 0 ? result.data.ts : existingTs,
+              fhr: result.data.fhr && result.data.fhr.length > 0 ? result.data.fhr : existingFhr,
+              toco:
+                result.data.toco && result.data.toco.length > 0 ? result.data.toco : existingToco,
+            });
+          } else {
+            setAnalysisData(result.data);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        console.error('[HOMEPAGE] Ошибка периодического запроса:', error);
+      }
     }, 10000);
 
     return () => {
       clearInterval(intervalId);
+      abortController.abort();
     };
   }, [ktgStatus, ktgId, actualKtgId, isNewKTG]);
   // Преобразуем данные из анализа в формат для графиков
@@ -859,11 +1014,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className={styles.page}>
       <Header
-        breadcrumbItems={[
-          'Пациенты',
-          'Антонова Светлана Игоревна, 32 неделя',
-          `КТГ ID ${actualKtgId || (isNewKTG ? 'Новое' : ktgId)}`,
-        ]}
+        breadcrumbItems={['Пациенты', `КТГ ID ${actualKtgId || (isNewKTG ? 'Новое' : ktgId)}`]}
       />
 
       <div className={styles.statusHeader}>
@@ -937,11 +1088,41 @@ export const HomePage: React.FC = () => {
           {/* Боковая панель */}
           <aside className={styles.sidebar}>
             <div className={styles.indicators}>
-              <div className={styles.indicators__row}>
-                <IndicatorCard {...indicators[0]} />
-                <IndicatorCard {...indicators[1]} />
-              </div>
+              {ktgStatus === 'completed' ? (
+                // Показываем карточку Фишера вместо ЧСС плода и ЧСС матери для завершенного КТГ
+                <FisherCard
+                  score={analysisData?.fisher_points ?? null}
+                  status={(() => {
+                    const score = analysisData?.fisher_points;
+                    if (score === null || score === undefined) return 'unknown';
+                    if (score >= 8) return 'good';
+                    if (score >= 6) return 'suspicious';
+                    return 'pathological';
+                  })()}
+                  description={(() => {
+                    const score = analysisData?.fisher_points;
+                    if (score === null || score === undefined) {
+                      return 'Оценка по Фишеру пока не определена. Анализ данных в процессе.';
+                    }
 
+                    if (score >= 8) {
+                      return 'Отличные показатели КТГ. Все параметры в норме. Продолжайте наблюдение.';
+                    } else if (score >= 6) {
+                      return 'Показатели требуют внимания. Рекомендуется дополнительное наблюдение и контроль.';
+                    } else {
+                      return 'Критические показатели КТГ. Требуется немедленное медицинское вмешательство.';
+                    }
+                  })()}
+                />
+              ) : (
+                // Показываем карточку ЧСС плода для активного КТГ
+                <div className={styles.indicators__row}>
+                  <IndicatorCard {...indicators[0]} />
+                  <IndicatorCard {...indicators[1]} />
+                </div>
+              )}
+
+              {/* Остальные карточки всегда показываем */}
               <div className={styles.indicators__row}>
                 <IndicatorCard {...indicators[2]} />
                 <IndicatorCard {...indicators[3]} />

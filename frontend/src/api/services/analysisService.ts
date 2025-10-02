@@ -11,10 +11,10 @@ export class AnalysisApiService {
   }
 
   // Получить анализ по конкретному ID
-  async getAnalysisById(ktgId: string): Promise<ApiResponse<any>> {
-    const url = `/analyze/ids/${ktgId}`;
+  async getAnalysisById(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
+    const url = `/analyze/ids/${ktgId}?models=`;
     console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
-    return httpClient.get<any>(url);
+    return httpClient.get<any>(url, { signal });
   }
 
   // Сохранить данные КТГ (только для создания новых КТГ)
@@ -47,10 +47,24 @@ export class AnalysisApiService {
   }
 
   // Получить полный анализ
-  async getAnalysis(ktgId: string): Promise<ApiResponse<any>> {
+  async getAnalysis(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
     const url = `${API_ENDPOINTS.ANALYSIS.ANALYZE}?records=1&predicts=1`;
     console.log(`[ANALYSIS SERVICE] Запрос к URL: ${url}`);
-    return httpClient.get<any>(url);
+    return httpClient.get<any>(url, { signal });
+  }
+
+  // Получить быстрый анализ без моделей (основные данные + records, но без тяжелых моделей)
+  async getAnalysisFast(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
+    const url = `${API_ENDPOINTS.ANALYSIS.ANALYZE}?records=1&models=null`;
+    console.log(`[ANALYSIS SERVICE] Быстрый запрос к URL: ${url}`);
+    return httpClient.get<any>(url, { signal });
+  }
+
+  // Получить только predicts (прогнозы и графики) через отдельный endpoint
+  async getAnalysisPredicts(ktgId: string, signal?: AbortSignal): Promise<ApiResponse<any>> {
+    const url = `/analyze/predicts/${ktgId}`;
+    console.log(`[ANALYSIS SERVICE] Запрос predicts к URL: ${url}`);
+    return httpClient.get<any>(url, { signal });
   }
 
   // Получить анализ рисков

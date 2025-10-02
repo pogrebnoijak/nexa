@@ -126,6 +126,7 @@ export interface RequestConfig {
   data?: any;
   headers?: Record<string, string>;
   timeout?: number;
+  signal?: AbortSignal;
 }
 
 export interface HttpClient {

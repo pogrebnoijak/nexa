@@ -516,34 +516,24 @@ export const Chart: React.FC<ChartProps> = ({
     if (!realTimeData?.length || baseTs == null) return [[], []];
 
     try {
-      // Фильтруем данные с валидными timestamp
-      const validData = realTimeData.filter(
-        (d) =>
-          d &&
-          typeof d.ts === 'number' &&
-          !isNaN(d.ts) &&
-          (d.fhr !== undefined || d.toco !== undefined)
-      );
-
-      if (validData.length === 0) return [[], []];
-
-      // Ограничиваем количество точек для предотвращения переполнения стека
-      const dataToProcess = validData;
-
-      const sorted = [...dataToProcess].sort((a, b) => a.ts - b.ts);
-
+      // Данные гарантированно отсортированы, поэтому просто обрабатываем их
       const x: number[] = [];
       const y: (number | null)[] = [];
 
-      for (let i = 0; i < sorted.length; i++) {
-        const p = sorted[i];
+      for (let i = 0; i < realTimeData.length; i++) {
+        const p = realTimeData[i];
+
+        // Минимальная валидация
+        if (!p || typeof p.ts !== 'number' || isNaN(p.ts)) continue;
+
         const val = isFetalHr ? p.fhr : p.toco;
 
         x.push((p.ts - baseTs) / 60); // относительные минуты
         y.push(val == null ? null : val);
 
-        if (i < sorted.length - 1) {
-          const n = sorted[i + 1];
+        // Проверяем разрывы только если нужно
+        if (i < realTimeData.length - 1) {
+          const n = realTimeData[i + 1];
           const nextVal = isFetalHr ? n.fhr : n.toco;
           if (nextVal == null && val != null) {
             const mid = ((p.ts + n.ts) / 2 - baseTs) / 60;

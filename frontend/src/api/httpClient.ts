@@ -20,13 +20,16 @@ class HttpClientImpl implements HttpClient {
     console.log(`[HTTP CLIENT] ${method} запрос к: ${fullUrl}`);
     const timeout = config?.timeout || this.defaultTimeout;
 
+    // Используем переданный AbortController или создаем новый с timeout
+    const signal = config?.signal || AbortSignal.timeout(timeout);
+
     const requestConfig: RequestInit = {
       method,
       headers: {
         'Content-Type': 'application/json',
         ...config?.headers,
       },
-      signal: AbortSignal.timeout(timeout),
+      signal,
     };
 
     if (data && method !== HTTP_METHODS.GET) {

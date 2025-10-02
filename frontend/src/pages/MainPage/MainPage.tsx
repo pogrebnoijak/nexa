@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Header } from '../../components/layout/Header';
 import { UserIcon, CalendarIcon } from '../../icons';
@@ -61,7 +61,7 @@ export const MainPage: React.FC = () => {
     id,
     patientName: `Пациент ${index + 1}`, // Временное имя, пока нет данных о пациентах
     weeks: `${28 + (index % 8)} недель`, // Временные данные
-    status: index % 3 === 0 ? 'Хорошее' : index % 3 === 1 ? 'Удовлетв.' : 'Плохое',
+    status: 'Неизвестно', // Серый статус для всех записей
     date:
       new Date(Date.now() - index * 24 * 60 * 60 * 1000).toLocaleDateString('ru-RU', {
         day: '2-digit',
@@ -88,13 +88,11 @@ export const MainPage: React.FC = () => {
         return '#FF8D28';
       case 'Плохое':
         return '#FF5F57';
+      case 'Неизвестно':
+        return '#696F79'; // Серый цвет для неизвестного статуса
       default:
-        return '#05A400';
+        return '#696F79'; // Серый цвет по умолчанию
     }
-  };
-
-  const handleKTGClick = (id: string) => {
-    navigate(`/ktg/${id}`);
   };
 
   // Генерация нового 8-символьного ID
@@ -107,12 +105,6 @@ export const MainPage: React.FC = () => {
     return result;
   };
 
-  // Обработчик создания нового КТГ
-  const handleNewKTG = () => {
-    console.log(`[MAIN PAGE] Переход к созданию нового КТГ`);
-    navigate(`/ktg/new`);
-  };
-
   return (
     <div className={styles.page}>
       <Header breadcrumbItems={['Кардиотокография']} hideLogo={true} />
@@ -123,9 +115,9 @@ export const MainPage: React.FC = () => {
             <div className={styles.title}>
               <h1>Кардиотокография</h1>
             </div>
-            <button className={styles.newKTGButton} onClick={handleNewKTG}>
+            <Link to='/ktg/new' className={styles.newKTGButton}>
               Новое КТГ
-            </button>
+            </Link>
           </div>
 
           <div className={styles.recordsList}>
@@ -140,11 +132,7 @@ export const MainPage: React.FC = () => {
             {!isLoading &&
               !error &&
               ktgRecords.map((record) => (
-                <div
-                  key={record.id}
-                  className={styles.recordCard}
-                  onClick={() => handleKTGClick(record.id)}
-                >
+                <Link key={record.id} to={`/ktg/${record.id}`} className={styles.recordCard}>
                   <div className={styles.recordId}>КТГ ID {record.id}</div>
                   <div className={styles.patientInfo}>
                     <div className={styles.patientIcon}>
@@ -165,7 +153,7 @@ export const MainPage: React.FC = () => {
                     </div>
                     <div className={styles.date}>{record.date}</div>
                   </div>
-                </div>
+                </Link>
               ))}
           </div>
         </div>

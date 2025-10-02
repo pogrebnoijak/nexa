@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../ui/Button';
 import { NexaIcon, ChevronDownIcon, ChevronRightIcon, SunIcon, ProfileIcon } from '../../../icons';
 import styles from './Header.module.scss';
@@ -45,26 +46,49 @@ export const Header: React.FC<HeaderProps> = ({ breadcrumbItems, hideLogo = fals
 
 // Компонент хлебных крошек
 const Breadcrumb: React.FC<{ items?: string[] }> = ({ items }) => {
-  const breadcrumbItems = items || [
-    'Пациенты',
-    'Антонова Светлана Игоревна, 32 неделя',
-    'КТГ ID 123455',
-  ];
+  const navigate = useNavigate();
+  const breadcrumbItems = items || ['Пациенты', 'КТГ ID 123455'];
+
+  const getBreadcrumbLink = (item: string, index: number) => {
+    // Определяем ссылки для каждого элемента хлебных крошек
+    // "Пациенты" не должно быть ссылкой
+    if (item === 'Пациенты') {
+      return null; // Не ссылка
+    } else if (index === 1) {
+      return '/'; // Второй элемент - ссылка на главную
+    } else {
+      return null; // Остальные элементы не ссылки
+    }
+  };
 
   return (
     <div className={styles.breadcrumb}>
-      {breadcrumbItems.map((item, index) => (
-        <React.Fragment key={index}>
-          <span
-            className={`${styles.breadcrumb__item} ${
-              index === breadcrumbItems.length - 1 ? styles['breadcrumb__item--active'] : ''
-            }`}
-          >
-            {item}
-          </span>
-          {index < breadcrumbItems.length - 1 && <ChevronRightIcon />}
-        </React.Fragment>
-      ))}
+      {breadcrumbItems.map((item, index) => {
+        const link = getBreadcrumbLink(item, index);
+        const isLast = index === breadcrumbItems.length - 1;
+
+        return (
+          <React.Fragment key={index}>
+            {link && !isLast ? (
+              <Link
+                to={link}
+                className={`${styles.breadcrumb__item} ${styles['breadcrumb__item--link']}`}
+              >
+                {item}
+              </Link>
+            ) : (
+              <span
+                className={`${styles.breadcrumb__item} ${
+                  isLast ? styles['breadcrumb__item--active'] : ''
+                }`}
+              >
+                {item}
+              </span>
+            )}
+            {index < breadcrumbItems.length - 1 && <ChevronRightIcon />}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };

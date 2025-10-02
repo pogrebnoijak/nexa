@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { ctgStreamClient, subscribeToCTGStream } from '../websocket';
 import { CTGStreamMessage } from '../types';
 import { useAnalysisStore } from '../../store/analysisStore';
@@ -8,52 +8,83 @@ export const useCTGStream = (ktgId: string, keepDataOnDisconnect: boolean = fals
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { addWebSocketData, updatePartialData } = useAnalysisStore();
+  const { addWebSocketData, updatePartialData, flushWebSocketData } = useAnalysisStore();
+
+  // Батчинг: накапливаем данные и отправляем пачками
+  const batchRef = useRef<{ ts: number; fhr: number; toco: number | null }[]>([]);
+  const batchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const processBatch = useCallback(() => {
+    if (batchRef.current.length === 0) return;
+
+    // Отправляем все накопленные данные одной пачкой
+    const batch = batchRef.current;
+    batchRef.current = [];
+
+    // Обновляем локальное состояние
+    setData((prev) => {
+      prev.push(...batch);
+      return prev;
+    });
+
+    // Добавляем данные в store пачкой
+    for (const point of batch) {
+      addWebSocketData(point.ts, point.fhr, point.toco);
+    }
+
+    // Принудительно обновляем store после батча
+    flushWebSocketData();
+  }, [addWebSocketData, flushWebSocketData]);
 
   const handleCTGData = useCallback(
     (message: CTGStreamMessage) => {
-      setData((prev) => [...prev, message.data]);
+      // Добавляем в батч
+      batchRef.current.push(message.data);
 
-      // Добавляем новую точку данных в store
-      addWebSocketData(message.data.ts, message.data.fhr, message.data.toco);
+      // Если батч полный (10 точек) или прошло время - обрабатываем
+      if (batchRef.current.length >= 10) {
+        if (batchTimeoutRef.current) {
+          clearTimeout(batchTimeoutRef.current);
+          batchTimeoutRef.current = null;
+        }
+        processBatch();
+      } else if (batchTimeoutRef.current === null) {
+        // Устанавливаем таймаут на обработку батча
+        batchTimeoutRef.current = setTimeout(processBatch, 50); // 50мс максимум
+      }
 
       setIsStreaming(true);
     },
-    [addWebSocketData]
+    [processBatch]
   );
 
   useEffect(() => {
     if (!ktgId) {
-      // Если ktgId пустой и не нужно сохранять данные, сбрасываем их
-      if (!keepDataOnDisconnect) {
-        setData([]);
-        setIsStreaming(false);
-        setError(null);
-        // Очищаем данные графика в store
-        updatePartialData({
-          ts: null,
-          fhr: null,
-          toco: null,
-        });
-      } else {
-        // Просто останавливаем стриминг, но данные сохраняем
-        setIsStreaming(false);
-        setError(null);
-      }
+      // НИКОГДА не очищаем данные - только останавливаем стриминг
+      console.log('[USE_CTG_STREAM] ktgId пустой, но НЕ очищаем данные');
+      setIsStreaming(false);
+      setError(null);
       return;
     }
 
     // Подписка на CTG поток
     subscribeToCTGStream(ktgId, handleCTGData);
 
-    // Очистка данных при смене КТГ (но не при завершении записи)
-    if (!keepDataOnDisconnect) {
-      setData([]);
-      setIsStreaming(false);
-      setError(null);
-    }
+    // НИКОГДА не очищаем данные при смене КТГ
+    console.log('[USE_CTG_STREAM] НЕ очищаем данные при смене КТГ');
 
     return () => {
+      // Очищаем таймаут батча
+      if (batchTimeoutRef.current) {
+        clearTimeout(batchTimeoutRef.current);
+        batchTimeoutRef.current = null;
+      }
+
+      // Обрабатываем оставшиеся данные в батче
+      if (batchRef.current.length > 0) {
+        processBatch();
+      }
+
       // Отписка от событий
       ctgStreamClient.offMessage('ctg_stream', handleCTGData);
     };

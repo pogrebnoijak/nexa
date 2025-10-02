@@ -73,7 +73,12 @@ export const StatusHeader: React.FC<StatusHeaderProps> = ({
         });
       }, 1000);
 
-      return () => clearInterval(interval);
+      return () => {
+        console.log('[STATUS HEADER] Очищаем таймер');
+        clearInterval(interval);
+      };
+    } else {
+      console.log('[STATUS HEADER] Статус не recording, таймер не запускается');
     }
   }, [status]);
 
