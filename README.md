@@ -4,7 +4,7 @@
 
 Полностью запустить можно так (нужно иметь установленный docker, docker-compose):
 
-`docker compose up` - поднимется `backend` (http://localhost:8000) и `frontend` (http://localhost:4000).
+`docker compose up` - поднимется `backend` (http://localhost:8000) и `frontend` (http://localhost:5173).
 
 (если что-то поменялось - стоит пересобрать `docker compose build --no-cache`)
 
@@ -31,7 +31,7 @@
 
 ## Фронтенд
 
-Можно запустить отдельно с помощью [start](frontend/start.sh) предварительно установив `node`
+[Фронтенд](frontend/README.md) можно запустить отдельно с помощью [start](frontend/start.sh) предварительно установив `node`
 
 [front](tools/frontend_client.py) - простой скрипт для эмуляции фронтенда
 
